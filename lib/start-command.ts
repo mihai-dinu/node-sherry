@@ -17,14 +17,7 @@ export async function start(port: string = getServerPort(), opts?: any): Promise
     createSherryHomeDir()
 
     const serverFile = path.join(__dirname, 'server.js')
-    // [TODO: Check port is open] Add a port checker function here where we first check if the
-    // port is open or being used by any other process
-    server = spawn('node', [serverFile, port, getServerShareDir()], {
-        detached: true,
-        stdio: 'ignore',
-    })
-
-    server.unref()
+    runNodeProcess(serverFile, port)
 }
 
 export function isServerAlreadyRunning(port: string): Promise<boolean> {
@@ -34,11 +27,22 @@ export function isServerAlreadyRunning(port: string): Promise<boolean> {
         .catch(() => false)
 }
 
-function createSherryHomeDir() {
+function createSherryHomeDir(): void {
     if (!fs.existsSync(constants.SHERRY_HOME)) {
         fs.mkdirSync(constants.SHERRY_HOME)
         fs.mkdirSync(getServerShareDir())
     }
+}
+
+function runNodeProcess(file: string, port: string): void {
+    // [TODO: Check port is open] Add a port checker function here where we first check if the
+    // port is open or being used by any other process
+    server = spawn('node', [file, port, getServerShareDir()], {
+        detached: true,
+        stdio: 'ignore',
+    })
+
+    server.unref()
 }
 
 if (!module.parent) {

@@ -9,33 +9,49 @@ const [port, workingDir] = args
 
 const server = new Hapi.Server({ port })
 
-server.route({
-    method: 'GET',
-    path: '/files/{fileName}',
-    handler: (req) => {
-        const filePath = path.join(workingDir, req.params.fileName)
+server.route([
+    {
+        method: 'GET',
+        path: '/files/{fileName}',
+        handler: (req: Hapi.Request) => {
+            const filePath = path.join(workingDir, req.params.fileName)
 
-        // [TODO: Remove file link] fs.existsSync returns false if the link exists, but the linked source doesn't
-        // Should remove a link if its source doesn't exist anymore
-        if (fs.existsSync(filePath)) {
-            return fs.createReadStream(filePath)
-        } else {
-            throw Boom.notFound('File not found')
+            // [TODO: Remove file link] fs.existsSync returns false if the link exists, but the linked source doesn't
+            // Should remove a link if its source doesn't exist anymore
+            if (fs.existsSync(filePath)) {
+                return fs.createReadStream(filePath)
+            } else {
+                throw Boom.notFound('File not found')
+            }
         }
     },
-})
-
-server.route({
-    method: 'GET',
-    path: '/api/v1/status',
-    handler: (req, h) => {
-        return h.response().code(200)
+    {
+        method: 'GET',
+        path: '/api/v1/status',
+        handler: (req: Hapi.Request, reply: Hapi.ResponseToolkit) => {
+            return reply.response().code(200)
+        }
     },
-})
+    {
+        method: 'POST',
+        path: '/api/v1/status',
+        handler: (req: Hapi.Request, reply: Hapi.ResponseToolkit) => {
+            const data = req.payload as { state: string }
+            if (data.hasOwnProperty('state') && data.state === 'down') {
+                stop()
+                return reply.response().code(200)
+            }
+        }
+    }
+])
 
-async function init() {
+async function start(): Promise<void> {
     await server.start()
     console.log(`Server running at: ${server.info.uri}`)
+}
+
+async function stop(): Promise<void> {
+    server.stop({ timeout: 2000 })
 }
 
 process.on('unhandledRejection', (err) => {
@@ -43,4 +59,4 @@ process.on('unhandledRejection', (err) => {
     process.exit(1)
 })
 
-init()
+start()
