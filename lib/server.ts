@@ -38,6 +38,7 @@ server.route([
         handler: (req: Hapi.Request, reply: Hapi.ResponseToolkit) => {
             const data = req.payload as { state: string }
             if (data.hasOwnProperty('state') && data.state === 'down') {
+                // [TODO: Stop server] Can this be done better?
                 stop()
                 return reply.response().code(200)
             }
