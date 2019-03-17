@@ -7,6 +7,7 @@ import { parseOptsAndStart, parseOptsAndUpload, stop } from './lib/commands'
 const pkg = require('../package.json')
 
 cli.version(pkg.version)
+cli.description('Sherry is a cli tool useful for sharing files over a private network.')
 
 cli.command('start')
     .description('Start the server used for sharing the files')

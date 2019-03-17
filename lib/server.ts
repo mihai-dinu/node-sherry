@@ -1,6 +1,5 @@
 import 'source-map-support/register'
 import * as Hapi from 'hapi'
-import * as Boom from 'boom'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -21,7 +20,7 @@ server.route([
             if (fs.existsSync(filePath)) {
                 return fs.createReadStream(filePath)
             } else {
-                throw Boom.notFound('File not found')
+                throw new Error('File not found')
             }
         },
     },

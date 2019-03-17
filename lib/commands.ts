@@ -2,40 +2,40 @@ import 'source-map-support/register'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as request from 'request-promise-native'
-import * as util from './util'
+import * as helper from './helper'
+import * as clipboardy from 'clipboardy'
 
 export async function parseOptsAndStart(...args: any[]): Promise<void> {
-    const newPort = util.getNamedOption('port', ...args)
+    const newPort = helper.getNamedOption('port', ...args)
     await start(newPort)
 }
 
 // TODO: Don't print to stdout from this function if called from upload
 async function start(port?: string): Promise<void> {
-    const configPort = util.getServerPort()
+    const configPort = helper.getServerPort()
     let serverPort = port ? port : configPort
 
     // Check if there's a server instance already running
-    if (await util.isServerRunning(configPort)) {
+    if (await helper.isServerRunning(configPort)) {
         if (serverPort !== configPort) {
             // Server is running but requested to start on different port --> restart the server
             await stop(configPort)
         } else {
             // Server is running and no port was specified --> nothing more to do
-            console.log('Server is already running...')
             return
         }
     }
 
-    util.createSherryHomeDir()
-    util.runSherryServer(serverPort)
-    util.setOrUpdateConfigParameter({ port: serverPort })
+    helper.createSherryHomeDir()
+    helper.runSherryServer(serverPort)
+    helper.setOrUpdateConfigParameter({ port: serverPort })
     console.log(`Started on port ${serverPort}...`)
 }
 
 export async function parseOptsAndUpload(...args: any[]) {
-    const newPort = util.getNamedOption('port', ...args)
-    const file = util.getUnnamedOption(...args)
-    await upload(file.pop(), newPort)
+    const newPort = helper.getNamedOption('port', ...args)
+    const file = helper.getUnnamedOption(...args).pop() // gets one file only
+    await upload(file, newPort)
 }
 
 async function upload(file: string, port?: string) {
@@ -43,7 +43,7 @@ async function upload(file: string, port?: string) {
 
     const uploadFileAbsolutePath = path.isAbsolute(file) ? file : path.normalize(path.join(process.cwd(), file))
     const fileName = path.basename(uploadFileAbsolutePath)
-    const shareFilePath = path.join(util.getServerShareDir(), fileName)
+    const shareFilePath = path.join(helper.getServerShareDir(), fileName)
 
     // If another file with the same name exists in the share directory
     // remove it before creating another one
@@ -60,14 +60,15 @@ async function upload(file: string, port?: string) {
     // Create a symlink to the "uploaded" file rather than copying the file to the share folder
     fs.symlinkSync(uploadFileAbsolutePath, shareFilePath)
 
-    const uri = util.getServerUri(port) + `/files/${fileName}`
+    const uri = helper.getServerUri(port) + `/files/${fileName}`
+    clipboardy.write(uri)
     console.log(`Your file is accessible at: ${uri}`)
 }
 
 export async function stop(port?: string) {
     const options = {
         method: 'POST',
-        uri: util.getServerUri(port) + '/api/v1/status',
+        uri: helper.getServerUri(port) + '/api/v1/status',
         body: {
             state: 'down',
         },

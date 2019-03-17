@@ -23,7 +23,10 @@ export function isServerRunning(port: string): Promise<boolean> {
 export function createSherryHomeDir(): void {
     if (!fs.existsSync(constants.SHERRY_HOME)) {
         fs.mkdirSync(constants.SHERRY_HOME)
-        fs.mkdirSync(getServerShareDir())
+    }
+    const sharedFilesDir = getServerShareDir()
+    if (!fs.existsSync(sharedFilesDir)) {
+        fs.mkdirSync(sharedFilesDir)
     }
 }
 
@@ -66,9 +69,9 @@ export function getServerPort(): string {
 export function getServerShareDir(): string {
     try {
         const config = getConfig()
-        return config.shareDir
+        return config.shareDir ? config.shareDir : constants.SHERRY_DEFAULT_FILES_DIR
     } catch {
-        return constants.SHERRY_DEFAULT_SHARE_DIR
+        return constants.SHERRY_DEFAULT_FILES_DIR
     }
 }
 

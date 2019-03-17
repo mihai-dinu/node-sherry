@@ -2,7 +2,10 @@
   "name": "sherry",
   "version": "0.1.0",
   "description": "",
-  "main": "sherry.js",
+  "main": "build/sherry.js",
+  "bin": {
+    "sherry": "build/sherry.js"
+  },
   "scripts": {
     "test": "jest",
     "start": "node build/sherry.js",
@@ -38,7 +41,7 @@
     ]
   },
   "devDependencies": {
-    "@types/boom": "^7.2.0",
+    "@types/clipboardy": "^1.1.0",
     "@types/commander": "^2.12.2",
     "@types/hapi": "^17.0.12",
     "@types/jest": "^23.0.0",
@@ -52,7 +55,7 @@
     "typescript": "^3.0.0"
   },
   "dependencies": {
-    "boom": "^7.2.0",
+    "clipboardy": "^1.2.3",
     "commander": "^2.15.1",
     "hapi": "^17.5.1",
     "request": "^2.87.0",
