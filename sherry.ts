@@ -2,9 +2,7 @@
 
 import 'source-map-support/register'
 import * as cli from 'commander'
-import { start } from './lib/start-command'
-import { upload } from './lib/upload-command'
-import { stop } from './lib/stop-command'
+import { parseOptsAndStart, parseOptsAndUpload, stop } from './lib/commands'
 
 const pkg = require('../package.json')
 
@@ -15,18 +13,21 @@ cli.command('start')
     .option('-p, --port [port]', 'The port to use for the app')
     // TODO: Not implemented yet
     // .option('-f, --foreground', 'Run the server in the foreground')
-    .action(start)
+    .action(parseOptsAndStart)
 
 cli.command('upload <file>')
     .description("Upload a file to the server - starts the server if it's not already started")
     .option('-p, --port [port]', 'The port to use for the app')
-    .action(upload)
+    .action(parseOptsAndUpload)
 
 cli.command('stop')
     .description('Stop the server')
-    .action(stop)
+    .action(async () => {
+        await stop()
+    })
 
 cli.command('list').description('List the files that are served by the server')
+// TODO: Not implemented yet
 // .action(list)
 
 cli.command('*').action(() => {

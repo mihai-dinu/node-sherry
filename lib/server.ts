@@ -23,14 +23,14 @@ server.route([
             } else {
                 throw Boom.notFound('File not found')
             }
-        }
+        },
     },
     {
         method: 'GET',
         path: '/api/v1/status',
         handler: (req: Hapi.Request, reply: Hapi.ResponseToolkit) => {
             return reply.response().code(200)
-        }
+        },
     },
     {
         method: 'POST',
@@ -42,8 +42,8 @@ server.route([
                 stop()
                 return reply.response().code(200)
             }
-        }
-    }
+        },
+    },
 ])
 
 async function start(): Promise<void> {
@@ -52,11 +52,11 @@ async function start(): Promise<void> {
 }
 
 async function stop(): Promise<void> {
-    server.stop({ timeout: 2000 })
+    server.stop()
 }
 
 process.on('unhandledRejection', (err) => {
-    console.log(err)
+    fs.writeFileSync('sherry_server.log', err)
     process.exit(1)
 })
 
