@@ -4,7 +4,7 @@ A minimal file sharing utility for usage within the same network.
 
 ## Install
 ```
-$ npm install -g sherry
+$ npm install -g node-sherry
 ```
 ## Usage
 
