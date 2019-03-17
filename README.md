@@ -17,7 +17,7 @@ $ sherry start [-p port]
 
 ### Upload a file
 ```
-$ sherry upload \<filename>
+$ sherry upload <filename>
 ```
 
 The upload command will auto start the service if it's not already running. You can still specify the port where you want the service to run with the same `-p <port>` switch as for the `start` command.
