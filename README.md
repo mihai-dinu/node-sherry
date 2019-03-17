@@ -14,6 +14,7 @@ Sherry will start a node service on your main network interface's IP address and
 ```
 $ sherry start [-p port]
 ```
+The port parameter is optional. A random port will be used if not specified.
 
 ### Upload a file
 ```
