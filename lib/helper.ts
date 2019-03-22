@@ -112,3 +112,30 @@ export function setOrUpdateConfigParameter(newConfig: Partial<ServerConfig>) {
 function getConfig(): ServerConfig {
     return JSON.parse(fs.readFileSync(constants.SHERRY_CONFIG_FILE).toString())
 }
+
+function getFileAbsolutePath(file: string): string {
+    return path.isAbsolute(file) ? file : path.normalize(path.join(process.cwd(), file))
+}
+
+export function uploadFilesToSymLinks(filesToUpload: string[]): Array<[string, string]> {
+    const fileMappings: Array<[string, string]> = []
+    for (const file of filesToUpload) {
+        const uploadFileAbsolutePath = getFileAbsolutePath(file)
+        const fileName = path.basename(uploadFileAbsolutePath) // aux var
+        const fileSymLink = path.join(getServerShareDir(), fileName)
+
+        // If another file with the same name exists in the share directory
+        // remove it before creating another one
+        try {
+            fs.lstatSync(fileSymLink)
+            fs.unlinkSync(fileSymLink)
+        } catch (err) {
+            // If there is no file with that name, ignore
+            if (err.code !== 'ENOENT') {
+                throw err
+            }
+        }
+        fileMappings.push([uploadFileAbsolutePath, fileSymLink])
+    }
+    return fileMappings
+}

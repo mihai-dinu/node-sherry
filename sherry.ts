@@ -16,7 +16,7 @@ cli.command('start')
     // .option('-f, --foreground', 'Run the server in the foreground')
     .action(parseOptsAndStart)
 
-cli.command('upload <file>')
+cli.command('upload [files...]')
     .description("Upload a file to the server - starts the server if it's not already started")
     .option('-p, --port [port]', 'The port to use for the app')
     .action(parseOptsAndUpload)

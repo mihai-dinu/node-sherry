@@ -34,35 +34,29 @@ async function start(port?: string): Promise<void> {
 
 export async function parseOptsAndUpload(...args: any[]) {
     const newPort = helper.getNamedOption('port', ...args)
-    const file = helper.getUnnamedOption(...args).pop() // gets one file only
-    await upload(file, newPort)
+    const files = helper.getUnnamedOption(...args).pop() // gets all files as an array
+    await upload(files, newPort)
 }
 
-async function upload(file: string, port?: string) {
+async function upload(files: string[], port?: string) {
     await start(port)
 
-    const uploadFileAbsolutePath = path.isAbsolute(file) ? file : path.normalize(path.join(process.cwd(), file))
-    const fileName = path.basename(uploadFileAbsolutePath)
-    const shareFilePath = path.join(helper.getServerShareDir(), fileName)
-
-    // If another file with the same name exists in the share directory
-    // remove it before creating another one
-    try {
-        fs.lstatSync(shareFilePath)
-        fs.unlinkSync(shareFilePath)
-    } catch (err) {
-        // If there is no file with that name, ignore
-        if (err.code !== 'ENOENT') {
-            throw err
-        }
+    const fileURIs = []
+    const fileMappings = helper.uploadFilesToSymLinks(files) // abs path for upload file and symlink
+    for (const [uploadFilePath, shareFilePath] of fileMappings) {
+        // Create a symlink to the "uploaded" file rather than copying the file to the share folder
+        fs.symlinkSync(uploadFilePath, shareFilePath)
+        fileURIs.push(helper.getServerUri(port) + `/files/${path.basename(uploadFilePath)}`)
     }
 
-    // Create a symlink to the "uploaded" file rather than copying the file to the share folder
-    fs.symlinkSync(uploadFileAbsolutePath, shareFilePath)
-
-    const uri = helper.getServerUri(port) + `/files/${fileName}`
-    clipboardy.write(uri)
-    console.log(`Your file is accessible at: ${uri}`)
+    const uris = fileURIs.join('\n')
+    await clipboardy.write(uris)
+    const multipleFiles = fileURIs.length > 1
+    if (multipleFiles) {
+        console.log(`Your files are accessible at:\n${uris}`)
+    } else {
+        console.log(`Your file is accessible at: ${uris}`)
+    }
 }
 
 export async function stop(port?: string) {
