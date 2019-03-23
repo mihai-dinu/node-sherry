@@ -32,9 +32,13 @@ async function start(port?: string): Promise<void> {
     console.log(`Started on port ${serverPort}...`)
 }
 
+// TODO: There is no check to see if the provided file actually exists
 export async function parseOptsAndUpload(...args: any[]) {
     const newPort = helper.getNamedOption('port', ...args)
     const files = helper.getUnnamedOption(...args).pop() // gets all files as an array
+    if (files.length === 0) {
+        return
+    }
     await upload(files, newPort)
 }
 
@@ -42,11 +46,11 @@ async function upload(files: string[], port?: string) {
     await start(port)
 
     const fileURIs = []
-    const fileMappings = helper.uploadFilesToSymLinks(files) // abs path for upload file and symlink
+    const fileMappings = helper.getFileMappings(files) // abs path for upload file and symlink
     for (const [uploadFilePath, shareFilePath] of fileMappings) {
         // Create a symlink to the "uploaded" file rather than copying the file to the share folder
         fs.symlinkSync(uploadFilePath, shareFilePath)
-        fileURIs.push(helper.getServerUri(port) + `/files/${path.basename(uploadFilePath)}`)
+        fileURIs.push(helper.getUploadFileUri(path.basename(uploadFilePath), port))
     }
 
     const uris = fileURIs.join('\n')
@@ -57,6 +61,24 @@ async function upload(files: string[], port?: string) {
     } else {
         console.log(`Your file is accessible at: ${uris}`)
     }
+}
+
+export function listFiles() {
+    const sharedFiles = helper.getSharedFiles()
+    const liveLinks = []
+    const deadLinks = []
+    for (const file of sharedFiles) {
+        if (helper.linkedFileExists(file)) {
+            liveLinks.push(file)
+        } else {
+            deadLinks.push(file)
+        }
+    }
+    helper.printFiles(liveLinks)
+}
+
+export function printStatus() {
+    console.log('Not implemented')
 }
 
 export async function stop(port?: string) {

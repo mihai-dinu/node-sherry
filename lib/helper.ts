@@ -109,18 +109,10 @@ export function setOrUpdateConfigParameter(newConfig: Partial<ServerConfig>) {
     }
 }
 
-function getConfig(): ServerConfig {
-    return JSON.parse(fs.readFileSync(constants.SHERRY_CONFIG_FILE).toString())
-}
-
-function getFileAbsolutePath(file: string): string {
-    return path.isAbsolute(file) ? file : path.normalize(path.join(process.cwd(), file))
-}
-
-export function uploadFilesToSymLinks(filesToUpload: string[]): Array<[string, string]> {
+export function getFileMappings(filesToUpload: string[]): Array<[string, string]> {
     const fileMappings: Array<[string, string]> = []
     for (const file of filesToUpload) {
-        const uploadFileAbsolutePath = getFileAbsolutePath(file)
+        const uploadFileAbsolutePath = getFileAbsolutePath(file, '.')
         const fileName = path.basename(uploadFileAbsolutePath) // aux var
         const fileSymLink = path.join(getServerShareDir(), fileName)
 
@@ -138,4 +130,34 @@ export function uploadFilesToSymLinks(filesToUpload: string[]): Array<[string, s
         fileMappings.push([uploadFileAbsolutePath, fileSymLink])
     }
     return fileMappings
+}
+
+export function printFiles(files: string[]) {
+    console.log('-'.repeat(80))
+    console.log('Files'.padEnd(30) + 'URIs')
+    console.log('-'.repeat(80))
+    for (let file of files) {
+        const uri = getUploadFileUri(file)
+        console.log(file.padEnd(30) + uri)
+    }
+}
+
+function getConfig(): ServerConfig {
+    return JSON.parse(fs.readFileSync(constants.SHERRY_CONFIG_FILE).toString())
+}
+
+function getFileAbsolutePath(file: string, cwd: string): string {
+    return path.resolve(`${cwd}/${file}`)
+}
+
+export function getSharedFiles() {
+    return fs.readdirSync(getServerShareDir())
+}
+
+export function linkedFileExists(file: string): boolean {
+    return fs.existsSync(fs.readlinkSync(getFileAbsolutePath(file, getServerShareDir())))
+}
+
+export function getUploadFileUri(file: string, port?: string): string {
+    return getServerUri(port) + `/files/${file}`
 }

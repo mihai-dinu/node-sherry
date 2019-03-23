@@ -2,7 +2,7 @@
 
 import 'source-map-support/register'
 import * as cli from 'commander'
-import { parseOptsAndStart, parseOptsAndUpload, stop } from './lib/commands'
+import { parseOptsAndStart, parseOptsAndUpload, listFiles, printStatus, stop } from './lib/commands'
 
 const pkg = require('../package.json')
 
@@ -12,13 +12,12 @@ cli.description('Sherry is a cli tool useful for sharing files over a private ne
 cli.command('start')
     .description('Start the server used for sharing the files')
     .option('-p, --port [port]', 'The port to use for the app')
-    // TODO: Not implemented yet
-    // .option('-f, --foreground', 'Run the server in the foreground')
     .action(parseOptsAndStart)
 
 cli.command('upload [files...]')
     .description("Upload a file to the server - starts the server if it's not already started")
     .option('-p, --port [port]', 'The port to use for the app')
+    .alias('up')
     .action(parseOptsAndUpload)
 
 cli.command('stop')
@@ -28,8 +27,12 @@ cli.command('stop')
     })
 
 cli.command('list').description('List the files that are served by the server')
-// TODO: Not implemented yet
-// .action(list)
+    .alias('ls')
+    .action(listFiles)
+
+// TODO: Implement this later
+// cli.command('status').description('Print the status of the file server')
+//     .action(printStatus)
 
 cli.command('*').action(() => {
     cli.help()
