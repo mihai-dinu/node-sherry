@@ -50,7 +50,7 @@ async function upload(files: string[], port?: string) {
     for (const [uploadFilePath, shareFilePath] of fileMappings) {
         // Create a symlink to the "uploaded" file rather than copying the file to the share folder
         fs.symlinkSync(uploadFilePath, shareFilePath)
-        fileURIs.push(helper.getUploadFileUri(path.basename(uploadFilePath), port))
+        fileURIs.push(helper.getUploadFileUri(path.basename(shareFilePath), port))
     }
 
     const uris = fileURIs.join('\n')

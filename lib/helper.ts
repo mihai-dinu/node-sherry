@@ -112,8 +112,8 @@ export function setOrUpdateConfigParameter(newConfig: Partial<ServerConfig>) {
 export function getFileMappings(filesToUpload: string[]): Array<[string, string]> {
     const fileMappings: Array<[string, string]> = []
     for (const file of filesToUpload) {
-        const uploadFileAbsolutePath = getFileAbsolutePath(file, '.')
-        const fileName = path.basename(uploadFileAbsolutePath) // aux var
+        const uploadFileAbsolutePath = path.resolve(file.replace(/~/g, os.homedir()))
+        const fileName = path.basename(uploadFileAbsolutePath)
         const fileSymLink = path.join(getServerShareDir(), fileName)
 
         // If another file with the same name exists in the share directory
@@ -146,18 +146,14 @@ function getConfig(): ServerConfig {
     return JSON.parse(fs.readFileSync(constants.SHERRY_CONFIG_FILE).toString())
 }
 
-function getFileAbsolutePath(file: string, cwd: string): string {
-    return path.resolve(`${cwd}/${file}`)
-}
-
 export function getSharedFiles() {
     return fs.readdirSync(getServerShareDir())
 }
 
 export function linkedFileExists(file: string): boolean {
-    return fs.existsSync(fs.readlinkSync(getFileAbsolutePath(file, getServerShareDir())))
+    return fs.existsSync(fs.readlinkSync(path.resolve(getServerShareDir(), file)))
 }
 
 export function getUploadFileUri(file: string, port?: string): string {
-    return getServerUri(port) + `/files/${file}`
+    return getServerUri(port) + `/files/${encodeURI(file)}`
 }
