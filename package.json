@@ -15,7 +15,7 @@
     "type": "git",
     "url": "git+https://github.com/mihai-dinu/sherry.git"
   },
-  "keywords": [],
+  "keywords": ["file", "server", "fileserver", "lan", "sherry"],
   "author": "",
   "license": "ISC",
   "bugs": {
