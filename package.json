@@ -1,63 +1,41 @@
 {
-  "name": "node-sherry",
-  "version": "0.1.3",
-  "description": "",
-  "main": "build/sherry.js",
-  "bin": {
-    "sherry": "build/sherry.js"
-  },
-  "scripts": {
-    "test": "jest",
-    "start": "node build/sherry.js",
-    "prepare": "tsc"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mihai-dinu/sherry.git"
-  },
-  "keywords": ["file", "server", "fileserver", "lan", "sherry"],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mihai-dinu/sherry/issues"
-  },
-  "homepage": "https://github.com/mihai-dinu/sherry#readme",
-  "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
+    "name": "node-sherry",
+    "version": "0.1.5",
+    "description": "",
+    "main": "build/sherry.js",
+    "bin": {
+        "sherry": "build/sherry.js"
     },
-    "globals": {
-      "ts-jest": {
-        "tsConfigFile": "tsconfig.json"
-      }
+    "scripts": {
+        "start": "node build/sherry.js",
+        "prepare": "tsc"
     },
-    "testMatch": [
-      "**/__tests__/*.+(ts|tsx)"
-    ]
-  },
-  "devDependencies": {
-    "@types/clipboardy": "^1.1.0",
-    "@types/commander": "^2.12.2",
-    "@types/hapi": "^17.0.12",
-    "@types/jest": "^23.0.0",
-    "@types/node": "^10.3.1",
-    "@types/request-promise-native": "^1.0.15",
-    "jest": "^23.5.0",
-    "prettier": "^1.13.5",
-    "ts-jest": "^23.1.3",
-    "typescript": "^3.0.0"
-  },
-  "dependencies": {
-    "clipboardy": "^1.2.3",
-    "commander": "^2.15.1",
-    "hapi": "^17.5.1",
-    "request": "^2.87.0",
-    "request-promise-native": "^1.0.5",
-    "source-map-support": "^0.5.6"
-  }
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mihai-dinu/sherry.git"
+    },
+    "keywords": ["file", "server", "fileserver", "lan", "sherry"],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mihai-dinu/sherry/issues"
+    },
+    "homepage": "https://github.com/mihai-dinu/sherry#readme",
+    "devDependencies": {
+        "@types/clipboardy": "^1.1.0",
+        "@types/hapi__hapi": "^18.2.5",
+        "@types/node": "^10.3.1",
+        "@types/request-promise-native": "^1.0.15",
+        "jest": "^25.0.0",
+        "prettier": "^1.13.5",
+        "typescript": "^3.0.0"
+    },
+    "dependencies": {
+        "@hapi/hapi": "^18.3.2",
+        "clipboardy": "^1.2.3",
+        "commander": "^2.15.1",
+        "request": "^2.87.0",
+        "request-promise-native": "^1.0.5",
+        "source-map-support": "^0.5.6"
+    }
 }

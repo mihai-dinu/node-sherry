@@ -1,5 +1,5 @@
 import 'source-map-support/register'
-import * as Hapi from 'hapi'
+import * as Hapi from '@hapi/hapi'
 import * as fs from 'fs'
 import * as path from 'path'
 
