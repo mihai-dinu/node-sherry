@@ -31,7 +31,7 @@
         "typescript": "^3.0.0"
     },
     "dependencies": {
-        "@hapi/hapi": "^18.3.2",
+        "@hapi/hapi": "^19.1.1",
         "clipboardy": "^1.2.3",
         "commander": "^2.15.1",
         "request": "^2.87.0",
